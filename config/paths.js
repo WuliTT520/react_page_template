@@ -9,7 +9,7 @@ const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
-// We use `PUBLIC_URL` environment variable or "homepage" field to infer
+// We use `PUBLIC_URL` environment variable or "page1" field to infer
 // "public path" at which the app is served.
 // webpack needs to know it to put the right <script> hrefs into HTML even in
 // single-page apps that may serve index.html for nested URLs like /todos/42.
@@ -49,13 +49,41 @@ const resolveModule = (resolveFn, filePath) => {
 };
 
 // config after eject: we're in ./config/
+//将entry改为数组
+const glob = require('glob');
+function getEntries(globPath) {
+    const files = glob.sync(globPath),
+        entries = {};
+    files.forEach(function(filepath) {
+        const split = filepath.split('/');
+        const name = split[split.length - 2];
+        entries[name] = './' + filepath;
+    });
+    return entries;
+}
+
+const entries = getEntries('src/**/index.js');
+
+function getIndexJs() {
+    const indexJsList = [];
+    Object.keys(entries).forEach((name) => {
+        const indexjs = resolveModule(resolveApp, `src/${name}/index`)
+        indexJsList.push({
+            name,
+            path: indexjs
+        });
+    });
+    return indexJsList;
+}
+const indexJsList = getIndexJs();
+
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: resolveApp('build'),
   appPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/index'),
+  appIndexJs: indexJsList,//修改了entry
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appTsConfig: resolveApp('tsconfig.json'),
@@ -66,6 +94,7 @@ module.exports = {
   appNodeModules: resolveApp('node_modules'),
   swSrc: resolveModule(resolveApp, 'src/service-worker'),
   publicUrlOrPath,
+  entries,
 };
 
 
