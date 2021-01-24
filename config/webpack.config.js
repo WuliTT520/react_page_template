@@ -559,7 +559,7 @@ module.exports = function (webpackEnv) {
               template: paths.appHtml,
               filename: name + '.html',
               //filename: isEnvProduction ? name + '.html' : name,
-              //publicPath: isEnvProduction ? './' : '',
+              publicPath: isEnvProduction ? '.'+paths.publicUrlOrPath : paths.publicUrlOrPath,
             },
             isEnvProduction
               ? {
