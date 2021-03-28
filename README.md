@@ -26,6 +26,8 @@ page1 => http://localhost:3000/page1.html/
 page2 => http://localhost:3000/page2.html/
 ```
 
+### 注意
+除了页面之外，所有的组件，或者文件夹下的js文件都不可取名为index！！！
 
 ### 版本
 ```
